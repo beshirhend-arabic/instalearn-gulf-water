@@ -1,0 +1,1767 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InstaLearn - التنمية المائية في دول الخليج العربي | تقييم PowerSchool</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts: Cairo & Tajawal -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        tajawal: ['Tajawal', 'sans-serif'],
+                    },
+                    colors: {
+                        insta: {
+                            purple: '#833ab4',
+                            red: '#fd1d1d',
+                            yellow: '#fcb045',
+                            pink: '#e1306c',
+                            blue: '#0095f6'
+                        }
+                    },
+                    backgroundImage: {
+                        'insta-gradient': 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
+                        'insta-story': 'linear-gradient(45deg, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%)',
+                        'water-card': 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Story Gradient Ring Border */
+        .story-ring {
+            padding: 2px;
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            border-radius: 9999px;
+        }
+
+        /* Floating reaction animation */
+        @keyframes floatUpFade {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                opacity: 0.9;
+                transform: translateY(-60px) scale(1.4) rotate(10deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-120px) scale(0.8) rotate(-10deg);
+            }
+        }
+
+        .floating-emoji {
+            position: absolute;
+            pointer-events: none;
+            font-size: 2rem;
+            animation: floatUpFade 1.2s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+            z-index: 50;
+        }
+
+        /* Confetti Fullscreen Canvas */
+        #fxCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col antialiased">
+    <canvas id="fxCanvas"></canvas>
+
+    <!-- TOP NAV HEADER -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
+            
+            <!-- Logo & Title -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-insta-gradient flex items-center justify-center text-white text-xl font-black shadow-md shadow-pink-500/20">
+                    <i class="fa-solid font-bold fa-droplet"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-black tracking-tight bg-insta-gradient bg-clip-text text-transparent">
+                        InstaLearn <span class="text-slate-800 text-xs sm:text-sm font-bold bg-none">| مياه الخليج</span>
+                    </h1>
+                    <p class="text-[10px] text-slate-500 font-medium">الصف الثامن الإعدادي • اللغة العربية</p>
+                </div>
+            </div>
+
+            <!-- Global Action Controls -->
+            <div class="flex items-center gap-2">
+                <!-- PowerSchool Evaluation Dashboard Launcher -->
+                <button onclick="openPowerSchoolModal()" class="px-3 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-1.5 shadow-md transition active:scale-95 animate-bounce">
+                    <i class="fa-solid fa-graduation-cap text-yellow-300"></i>
+                    <span class="hidden md:inline">درجات PowerSchool</span>
+                    <span class="md:hidden">PowerSchool</span>
+                </button>
+
+                <!-- Active Team Switcher Dropdown -->
+                <div class="bg-slate-100 p-1 rounded-full border border-slate-200 hidden sm:flex items-center gap-1">
+                    <span class="text-[11px] font-bold text-slate-500 pr-2">تشارك باسم:</span>
+                    <select id="activeTeamSelect" onchange="changeActiveTeam(this.value)" class="bg-white text-xs font-black text-slate-800 rounded-full px-2.5 py-1 border border-slate-300 focus:outline-none focus:ring-2 focus:ring-pink-500 cursor-pointer">
+                        <!-- Dynamic active team options -->
+                    </select>
+                </div>
+
+                <!-- Random Event Button -->
+                <button onclick="showNotification('تنبيه','المكافآت الاستثنائية معطلة في النسخة المشتركة لمنع التلاعب بالنقاط.','info')" class="px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md hover:opacity-95 transition active:scale-95">
+                    <i class="fa-solid fa-wand-magic-sparkles text-yellow-200"></i>
+                    <span class="hidden sm:inline">حدث استثنائي</span>
+                </button>
+
+                <!-- Audio Toggle -->
+                <button id="soundToggleBtn" onclick="toggleSound()" class="w-9 h-9 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center justify-center transition">
+                    <i class="fa-solid fa-volume-high text-sm"></i>
+                </button>
+
+                <!-- Leaderboard Drawer Toggle -->
+                <button onclick="openLeaderboardModal()" class="px-3.5 py-1.5 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center gap-1.5 hover:bg-slate-800 transition active:scale-95 shadow-md">
+                    <i class="fa-solid fa-trophy text-amber-400"></i>
+                    <span class="hidden sm:inline">الصدارة</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 max-w-6xl w-full mx-auto px-2 sm:px-4 py-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- RIGHT/MAIN FEED COLUMN (8 Cols on Desktop) -->
+        <section class="lg:col-span-8 flex flex-col gap-5">
+            
+            <!-- LESSON SUMMARY BRIEFING BANNER -->
+            <div class="bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-700 rounded-2xl p-4 sm:p-5 text-white shadow-xl relative overflow-hidden">
+                <div class="absolute -left-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between gap-2 mb-2">
+                        <span class="px-2.5 py-0.5 rounded-full bg-white/20 text-white font-bold text-xs backdrop-blur-md">
+                            📘 درس اليوم الرسمي
+                        </span>
+                        <button onclick="openPowerSchoolModal()" class="text-xs bg-emerald-500/30 hover:bg-emerald-500/50 text-emerald-100 font-bold px-2.5 py-1 rounded-lg border border-emerald-300/30 backdrop-blur-sm transition">
+                            📊 ربط التقييم بـ PowerSchool
+                        </button>
+                    </div>
+                    
+                    <h2 class="text-xl sm:text-2xl font-black mb-1.5">التنمية المائية في دول الخليج العربي</h2>
+                    <p class="text-xs sm:text-sm text-sky-100 leading-relaxed font-normal">
+                        حلل أسباب المشكلة المائية وتأثيرها الهيكلي، وقيّم الحلول المستدامة للحفاظ على المورد الذي يفوق النفط قيمةً وأهمية للحياة!
+                    </p>
+
+                    <!-- Quick Facts Pills -->
+                    <div class="flex flex-wrap gap-2 mt-3 text-[11px] font-bold">
+                        <span class="px-2.5 py-1 rounded-lg bg-black/20 text-sky-200 border border-white/10 flex items-center gap-1">
+                            <i class="fa-solid fa-droplet text-cyan-300"></i> استنزاف المياه الجوفية
+                        </span>
+                        <span class="px-2.5 py-1 rounded-lg bg-black/20 text-sky-200 border border-white/10 flex items-center gap-1">
+                            <i class="fa-solid fa-industry text-amber-300"></i> تحلية البحر & المعالجة
+                        </span>
+                        <span class="px-2.5 py-1 rounded-lg bg-black/20 text-sky-200 border border-white/10 flex items-center gap-1">
+                            <i class="fa-solid fa-seedling text-emerald-300"></i> ترشيد الاستهلاك
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="syncStatus" role="status" class="bg-amber-50 border border-amber-200 rounded-xl px-4 py-2 text-xs font-bold text-amber-800">⏳ جارٍ الاتصال بقاعدة بيانات الصف المشتركة... لا تُرسلوا المشاركات حتى تظهر عبارة «متصل».</div>
+             <!-- INSTAGRAM STORIES BAR -->
+            <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-200/80 overflow-x-auto scrollbar-none">
+                <div class="flex items-center gap-4 min-w-max">
+                    <div class="text-center cursor-pointer group" onclick="openLessonOverviewModal()">
+                        <div class="story-ring p-[2px] rounded-full inline-block group-hover:scale-105 transition">
+                            <div class="w-14 h-14 rounded-full bg-slate-900 border-2 border-white flex items-center justify-center text-white text-xl">
+                                📖
+                            </div>
+                        </div>
+                        <p class="text-[11px] font-bold text-slate-700 mt-1">الملف التعليمي</p>
+                    </div>
+
+                    <div class="h-10 w-[1px] bg-slate-200"></div>
+
+                    <!-- Dynamic Group Stories rendered via JS -->
+                    <div id="storiesContainer" class="flex items-center gap-4"></div>
+                </div>
+            </div>
+
+            <!-- POST FEED CARDS CONTAINER -->
+            <div id="feedContainer" class="flex flex-col gap-6">
+                <!-- Group cards dynamically injected here -->
+            </div>
+        </section>
+
+        <!-- LEFT/SIDEBAR COLUMN (4 Cols on Desktop) -->
+        <aside class="lg:col-span-4 flex flex-col gap-5">
+            
+            <!-- POWERSCHOOL DIRECT TEACHER SUMMARY WIDGET -->
+            <div class="bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 rounded-2xl p-5 text-white shadow-lg relative overflow-hidden border border-emerald-700/50">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-300 text-lg">
+                            <i class="fa-solid fa-award"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-black text-sm text-white">رصد درجات PowerSchool</h3>
+                            <p class="text-[10px] text-emerald-200">تحويل التفاعل إلى درجات رسمية</p>
+                        </div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded bg-emerald-500/30 text-emerald-300 text-[10px] font-black">مُعدّ للتصدير</span>
+                </div>
+
+                <p class="text-xs text-slate-300 mb-4 leading-relaxed font-medium">
+                    تقوم المنصة تلقائياً بتجميع نقاط الفرق، ودقة الإجابات في مستويات بلوم، وجودة التفاعل الإيجابي، وحساب الدرجة النهائية من 100% أو 20/20 لتسجيلها في بورسكول.
+                </p>
+
+                <button onclick="openPowerSchoolModal()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-black text-xs shadow-md transition flex items-center justify-center gap-2 active:scale-95">
+                    <i class="fa-solid fa-table-cells"></i>
+                    <span>فتح جدول التقييم والتصدير المباشر</span>
+                </button>
+            </div>
+
+            <!-- TEACHER & CLASS DASHBOARD WIDGET -->
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-sky-400 to-indigo-600 flex items-center justify-center text-white font-black text-lg shadow-md">
+                            <i class="fa-solid fa-chalkboard-user"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-sm">مجتمع الصف الثامن</h3>
+                            <p class="text-xs text-emerald-600 font-semibold flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                                6 فرق مفعّلة متنافسة
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Class Respect Meter Bar -->
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 mb-4">
+                    <div class="flex justify-between text-xs font-bold mb-1">
+                        <span class="text-slate-600">مؤشر الاحترام والدعم العام</span>
+                        <span id="globalRespectVal" class="text-pink-600">98%</span>
+                    </div>
+                    <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+                        <div id="globalRespectBar" class="h-full bg-gradient-to-r from-pink-500 to-rose-500 transition-all duration-500" style="width: 98%;"></div>
+                    </div>
+                    <p class="text-[10px] text-slate-500 mt-1.5">التعليقات المحفزة والداعمة ترفع رصيد الصف وتكافئ الفريق بـ XP إضافي!</p>
+                </div>
+
+                <!-- Mission Difficulty Rewards Info -->
+                <div class="space-y-2">
+                    <h4 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                        <i class="fa-solid fa-award text-amber-500"></i> نظام مكافآت المهام (XP)
+                    </h4>
+                    <div class="grid grid-cols-2 gap-1.5 text-[11px] font-bold">
+                        <div class="p-1.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100 flex justify-between">
+                            <span>سهلة</span>
+                            <span>+10 XP</span>
+                        </div>
+                        <div class="p-1.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-100 flex justify-between">
+                            <span>متوسطة</span>
+                            <span>+20 XP</span>
+                        </div>
+                        <div class="p-1.5 rounded-lg bg-purple-50 text-purple-700 border border-purple-100 flex justify-between">
+                            <span>صعبة</span>
+                            <span>+35 XP</span>
+                        </div>
+                        <div class="p-1.5 rounded-lg bg-amber-50 text-amber-700 border border-amber-100 flex justify-between">
+                            <span>خبير</span>
+                            <span>+50 XP</span>
+                        </div>
+                        <div class="p-1.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-100 flex justify-between col-span-2">
+                            <span>مهمة ابتكارية / أسطورية</span>
+                            <span>+75 إلى +100 XP</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MINI LEADERBOARD WIDGET -->
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-black text-slate-800 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-ranking-star text-amber-500"></i>
+                        قائمة الترتيب المشتركة
+                    </h3>
+                    <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-bold">يتحدث تلقائيًا</span>
+                </div>
+
+                <div id="miniLeaderboard" class="space-y-2.5">
+                    <!-- Dynamic Top Groups list injected via JS -->
+                </div>
+            </div>
+
+            <!-- BLOOM'S TAXONOMY PROGRESS DISTRIBUTION -->
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
+                <h3 class="font-black text-slate-800 text-sm mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-brain text-indigo-500"></i>
+                    توزّع مستويات التفكير (بلوم)
+                </h3>
+                <div class="space-y-2 text-xs font-bold">
+                    <div>
+                        <div class="flex justify-between mb-1 text-slate-600">
+                            <span>التحليل (Analyze)</span>
+                            <span class="text-blue-600">45%</span>
+                        </div>
+                        <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-blue-500" style="width: 45%;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1 text-slate-600">
+                            <span>التقويم (Evaluate)</span>
+                            <span class="text-purple-600">35%</span>
+                        </div>
+                        <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-purple-500" style="width: 35%;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1 text-slate-600">
+                            <span>الابتكار (Create)</span>
+                            <span class="text-emerald-600">20%</span>
+                        </div>
+                        <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-emerald-500" style="width: 20%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- POWERSCHOOL ASSESSMENT & GRADEBOOK MODAL -->
+    <div id="powerSchoolModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-4xl w-full p-5 sm:p-6 shadow-2xl border border-slate-100 relative my-auto max-h-[90vh] overflow-y-auto">
+            
+            <!-- Close Button -->
+            <button onclick="closePowerSchoolModal()" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- Header -->
+            <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-200">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-2xl font-black shadow-md">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-black text-slate-900">نظام تقييم المعلم وتصدير درجات PowerSchool</h3>
+                    <p class="text-xs text-slate-500 font-bold">تحويل التفاعل والمهمات والأداء المائي إلى درجات معيارية جاهزة للرصد</p>
+                </div>
+            </div>
+
+            <!-- Rubric Weighting Configuration Banner -->
+            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 mb-5 grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="p-3 bg-white rounded-xl border border-slate-200 text-xs">
+                    <div class="font-black text-slate-800 mb-1 text-emerald-700 flex items-center gap-1">
+                        <i class="fa-solid fa-clipboard-check"></i> المهمات الأكاديمية (60%)
+                    </div>
+                    <p class="text-[11px] text-slate-500">حسب دقة الإجابة عن قضايا بلوم والمهمات المكتملة.</p>
+                </div>
+                <div class="p-3 bg-white rounded-xl border border-slate-200 text-xs">
+                    <div class="font-black text-slate-800 mb-1 text-blue-700 flex items-center gap-1">
+                        <i class="fa-solid fa-comments"></i> التفاعل والتعليقات (25%)
+                    </div>
+                    <p class="text-[11px] text-slate-500">بناءً على التفاعلات الإيجابية والمناقشات الداعمة.</p>
+                </div>
+                <div class="p-3 bg-white rounded-xl border border-slate-200 text-xs">
+                    <div class="font-black text-slate-800 mb-1 text-purple-700 flex items-center gap-1">
+                        <i class="fa-solid fa-heart-circle-check"></i> المواطنة الرقمية (15%)
+                    </div>
+                    <p class="text-[11px] text-slate-500">مؤشر الاحترام، عدم إرسال تعليقات سلبية، والسلسلة.</p>
+                </div>
+            </div>
+
+            <!-- Dynamic Evaluation Table -->
+            <div class="overflow-x-auto mb-5 rounded-2xl border border-slate-200 shadow-2xs">
+                <table class="w-full text-right text-xs">
+                    <thead class="bg-slate-900 text-white font-bold">
+                        <tr>
+                            <th class="p-3">الفريق / المجموعة</th>
+                            <th class="p-3 text-center">النقاط (XP)</th>
+                            <th class="p-3 text-center">المهمات المنجزة</th>
+                            <th class="p-3 text-center">التفاعل والاحترام</th>
+                            <th class="p-3 text-center">الدرجة المستحقة (من 20)</th>
+                            <th class="p-3 text-center">النسبة (100%)</th>
+                            <th class="p-3 text-center">التقدير (Grade)</th>
+                            <th class="p-3 text-center">ملاحظة للمعلم</th>
+                        </tr>
+                    </thead>
+                    <tbody id="powerSchoolTableBody" class="divide-y divide-slate-100 font-semibold bg-white">
+                        <!-- Dynamic Rows Injected via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Export and Copy Options -->
+            <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                <div class="text-xs font-bold text-slate-700 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info text-emerald-600 text-base"></i>
+                    <span>يمكنك نسخ الجدول مباشرة أو تصديره كملف CSV لاستيراده في دفتر درجات PowerSchool!</span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button onclick="copyPowerSchoolTable()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs transition flex items-center gap-1.5 shadow-sm active:scale-95">
+                        <i class="fa-solid fa-copy"></i>
+                        <span>نسخ الجدول لدفتر الدرجات</span>
+                    </button>
+
+                    <button onclick="exportPowerSchoolCSV()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs transition flex items-center gap-1.5 shadow-sm active:scale-95">
+                        <i class="fa-solid fa-file-csv"></i>
+                        <span>تصدير CSV لـ PowerSchool</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Instructions for PowerSchool Entry -->
+            <div class="mt-5 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900">
+                <h4 class="font-black mb-1.5 flex items-center gap-1.5">
+                    <i class="fa-solid fa-lightbulb text-amber-600"></i> خطوات إدخال الدرجات في نظام PowerSchool Teacher Portal:
+                </h4>
+                <ol class="list-decimal list-inside space-y-1 font-semibold text-slate-800">
+                    <li>افتح حساب معلم **PowerSchool** ثم توجه إلى قائمة **Gradebook** اختر المادة (اللغة العربية - الصف الثامن).</li>
+                    <li>أنشئ تقييماً جديداً (Assignment) باسم: **"تطبيقات التنمية المائية - InstaLearn"** وحدد الدرجة من (20) أو (100).</li>
+                    <li>اضغط على زر **"نسخ الجدول"** أعلاه، وقم بلصق الدرجات أو إدخال القيمة المقابلة لكل فريق/طالب مباشرة.</li>
+                    <li>يمكنك تعديل الدرجة يدوياً في الجدول قبل التصدير إذا أردت إضافة ملاحظات خاصة.</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- MISSION CHALLENGE MODAL -->
+    <div id="missionModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border border-slate-100 relative animate-in fade-in zoom-in duration-200 my-auto">
+            
+            <!-- Close Button -->
+            <button onclick="closeMissionModal()" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- Mission Header Badge -->
+            <div id="modalMissionBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-black mb-3">
+                <i class="fa-solid fa-unlock text-amber-600"></i>
+                <span id="modalBloomCategory">التحليل - Analyze</span>
+            </div>
+
+            <!-- Group Info Header -->
+            <div class="flex items-center gap-3 mb-4 border-b border-slate-100 pb-3">
+                <div id="modalGroupAvatar" class="w-12 h-12 rounded-full bg-slate-200 flex items-center justify-center text-2xl shadow-sm">
+                    🛡️
+                </div>
+                <div>
+                    <h3 id="modalGroupName" class="text-lg font-black text-slate-800">فرسان المائية</h3>
+                    <p id="modalMissionMeta" class="text-xs font-bold text-slate-500">المهمة الغامضة #1 • صعوبة: خبير (+50 XP)</p>
+                </div>
+            </div>
+
+            <!-- Mission Title & Description -->
+            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 mb-5">
+                <h4 id="modalMissionTitle" class="text-base sm:text-lg font-black text-slate-900 mb-2 flex items-center gap-2">
+                    🕵️‍♂️ القضية الغامضة: لغز استنزاف المياه الجوفية
+                </h4>
+                <p id="modalMissionDesc" class="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                    تعتمد العديد من دول الخليج على الخزانات الجوفية. بصفتك المحقق المائي الأول، حلل أسباب الانخفاض الحاد في المياه الجوفية بالمنطقة وحدد النتيجة المباشرة الأكثر خطورة.
+                </p>
+            </div>
+
+            <!-- Interactive Options / Input Area -->
+            <div id="modalInteractiveArea" class="space-y-3 mb-5">
+                <!-- Injected via Javascript depending on challenge type -->
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center justify-between pt-3 border-t border-slate-100">
+                <button onclick="changeMissionAction()" class="px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-100 font-bold text-xs flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-rotate text-amber-500"></i>
+                    <span>تغيير المهمة (-5 XP)</span>
+                </button>
+
+                <button id="submitMissionBtn" onclick="submitMissionAnswer()" class="px-6 py-2.5 rounded-xl bg-insta-gradient text-white font-black text-sm shadow-lg shadow-pink-500/25 hover:opacity-95 transition active:scale-95">
+                    إرسال الحل واعتماد الـ XP ✨
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FULL LEADERBOARD MODAL -->
+    <div id="leaderboardModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-5 sm:p-6 shadow-2xl border border-slate-100 relative animate-in zoom-in-95 duration-200">
+            <button onclick="closeLeaderboardModal()" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 rounded-full bg-amber-100 text-amber-500 mx-auto flex items-center justify-center text-3xl mb-2 shadow-inner">
+                    🏆
+                </div>
+                <h3 class="text-xl font-black text-slate-800">لوحة الشرف والصدارة M-10</h3>
+                <p class="text-xs text-slate-500">التنافس الإيجابي المائي للصف الثامن الاعدادي</p>
+            </div>
+
+            <div id="fullLeaderboardList" class="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
+                <!-- Dynamic ranked groups injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- LESSON OVERVIEW TEXT MODAL -->
+    <div id="lessonModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border border-slate-100 relative max-h-[85vh] overflow-y-auto">
+            <button onclick="closeLessonModal()" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="text-xl font-black text-slate-900 mb-3 border-b border-slate-100 pb-2 flex items-center gap-2">
+                <i class="fa-solid fa-book-open text-sky-500"></i> نص الدرس: التنمية المائية في دول الخليج العربي
+            </h3>
+            <div class="text-xs sm:text-sm leading-relaxed text-slate-700 space-y-3 font-medium">
+                <p class="bg-sky-50 p-3 rounded-xl border border-sky-100 font-bold text-sky-900">
+                    «وَجَعَلْنَا مِنَ الْمَاءِ كُلَّ شَيْءٍ حَيٍّ» - الآية الكريمة تُبرز قيمة المياه كأساس للحياة والتنمية المستدامة في شبه الجزيرة العربية.
+                </p>
+                <p>
+                    تعتمد دول الخليج العربي على عدة مصادر للمياه، منها **المياه الجوفية** المخزونة في طبقات الأرض، لكن التطور العمراني والصناعي والزراعي الحديث، إلى جانب كثرة السكان وارتفاع مستوى المعيشة، أدى إلى ضغط هائل واستنزاف حاد لهذه الموارد.
+                </p>
+                <p>
+                    **أبرز مقترحات العلماء والخبراء للتنمية المائية:**
+                </p>
+                <ul class="list-disc list-inside space-y-1 font-semibold text-slate-800">
+                    <li>تطهير مياه المجاري وتكريرها واستخدامها في الري والغسيل والاستهلاك الصناعي.</li>
+                    <li>التوسع في وضع مصادر المياه تحت الحماية الجوية والبحرية والبرية وتأمين مرافقها.</li>
+                    <li>تشديد الرقابة والتوعية بالترشيد المستمر.</li>
+                    <li>الكشف عن المياه الجوفية وتقنيات حصاد مياه الأمطار والسيول كي لا تضيع في الرمال أو البحر.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APP LOGIC -->
+    <script>
+        // Sound System (Web Audio API - Pure JS Sound Generation)
+        let soundEnabled = true;
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioCtx();
+            }
+        }
+
+        function playTone(freq, type, duration, vol = 0.1) {
+            if (!soundEnabled) return;
+            initAudio();
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        function playReactionSound() {
+            playTone(523.25, 'sine', 0.15, 0.15); // C5
+        }
+
+        function playSuccessSound() {
+            if (!soundEnabled) return;
+            initAudio();
+            const notes = [523.25, 659.25, 783.99, 1046.50];
+            notes.forEach((n, i) => {
+                setTimeout(() => playTone(n, 'triangle', 0.2, 0.12), i * 80);
+            });
+        }
+
+        function playPenaltySound() {
+            playTone(150, 'sawtooth', 0.3, 0.2);
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('soundToggleBtn');
+            btn.innerHTML = soundEnabled ? 
+                '<i class="fa-solid fa-volume-high text-sm"></i>' : 
+                '<i class="fa-solid fa-volume-xmark text-sm text-red-500"></i>';
+        }
+
+        // Classroom Groups Data State
+        const groupsData = [
+            {
+                id: 1,
+                name: 'فرسان المائية',
+                avatar: '🛡️',
+                xp: 185,
+                level: 3,
+                levelTitle: 'المبتكر',
+                respect: 95,
+                missionLocked: false,
+                completedMissions: 2,
+                streak: 4,
+                badges: ['🧠 تفكير ناقد', '⚡ سرعة الإجابة'],
+                reactions: { love: 14, fire: 22, clap: 9, star: 12, rocket: 8 },
+                submittedAnswer: 'السبب الرئيس لاستنزاف المياه الجوفية هو التطور العمراني والصناعي السريع واستهلاك الري الحديث دون تكامل مع تقنيات حصاد السيول.',
+                submittedTime: 'منذ 10 د',
+                comments: [
+                    { author: 'سفراء الترشيد', authorAvatar: '💡', text: 'فريق مبدع وإجابة متناسقة جداً! 👏', positive: true, time: 'منذ 5 د' },
+                    { author: 'رواد التنمية', authorAvatar: '🌊', text: 'استمروا يا أبطال الخليج! 🔥', positive: true, time: 'منذ 12 د' }
+                ],
+                activeMissionIndex: 0
+            },
+            {
+                id: 2,
+                name: 'رواد التنمية',
+                avatar: '🌊',
+                xp: 230,
+                level: 4,
+                levelTitle: 'العقل المدبر',
+                respect: 98,
+                missionLocked: false,
+                completedMissions: 3,
+                streak: 6,
+                badges: ['🏆 بطل الابتكار', '🤝 القائد المترشيد'],
+                reactions: { love: 28, fire: 35, clap: 18, star: 20, rocket: 15 },
+                submittedAnswer: 'الخيار (2) هو الأفضل والأكثر استدامة: لأنه يقلل التكاليف المرتفعة لاستهلاك النفط والغاز بالتحلية ويحمي البيئة البحرية عبر إعادة تدوير مياه الصرف الصحي.',
+                submittedTime: 'منذ 15 د',
+                comments: [
+                    { author: 'أبطال المستقبل', authorAvatar: '🚀', text: 'تحليل مميز لمشكلة استنزاف المياه! 🚀', positive: true, time: 'منذ 2 د' }
+                ],
+                activeMissionIndex: 1
+            },
+            {
+                id: 3,
+                name: 'سفراء الترشيد',
+                avatar: '💡',
+                xp: 140,
+                level: 2,
+                levelTitle: 'المطور',
+                respect: 90,
+                missionLocked: true,
+                completedMissions: 1,
+                streak: 2,
+                badges: ['🌿 صديق البيئة'],
+                reactions: { love: 10, fire: 12, clap: 7, star: 5, rocket: 4 },
+                submittedAnswer: null,
+                submittedTime: null,
+                comments: [],
+                activeMissionIndex: 2
+            },
+            {
+                id: 4,
+                name: 'صناع المستقبل',
+                avatar: '🚀',
+                xp: 210,
+                level: 3,
+                levelTitle: 'المبتكر',
+                respect: 96,
+                missionLocked: false,
+                completedMissions: 3,
+                streak: 5,
+                badges: ['⭐ نجم التحليل', '💎 شفرة المياه'],
+                reactions: { love: 19, fire: 25, clap: 14, star: 16, rocket: 11 },
+                submittedAnswer: 'حملة توعوية تحت شعار: "قطرة أثمن من النفط" نستخدم فيها فيديوهات تفاعلية لتوعية الأجيال بحصاد مياه الأمطار والحد من الهدر.',
+                submittedTime: 'منذ 20 د',
+                comments: [
+                    { author: 'فرسان المائية', text: 'فكرة حملة الترشيد خرافية ومبتكرة! 💯', positive: true, time: 'منذ 8 د' }
+                ],
+                activeMissionIndex: 3
+            },
+            {
+                id: 5,
+                name: 'أبطال الاستدامة',
+                avatar: '🌱',
+                xp: 115,
+                level: 2,
+                levelTitle: 'المطور',
+                respect: 88,
+                missionLocked: true,
+                completedMissions: 1,
+                streak: 1,
+                badges: ['🔍 المحقق المائي'],
+                reactions: { love: 8, fire: 10, clap: 5, star: 6, rocket: 2 },
+                submittedAnswer: null,
+                submittedTime: null,
+                comments: [],
+                activeMissionIndex: 4
+            },
+            {
+                id: 6,
+                name: 'نخبة التكنولوجيا',
+                avatar: '🔬',
+                xp: 160,
+                level: 3,
+                levelTitle: 'المبتكر',
+                respect: 92,
+                missionLocked: true,
+                completedMissions: 2,
+                streak: 3,
+                badges: ['⚙️ خبير التقنيات'],
+                reactions: { love: 12, fire: 18, clap: 11, star: 9, rocket: 6 },
+                submittedAnswer: null,
+                submittedTime: null,
+                comments: [],
+                activeMissionIndex: 5
+            }
+        ];
+
+        // Mission Pool mapped directly to lesson text & Bloom's taxonomy
+        const missionPool = [
+            {
+                id: 'm1',
+                bloomCategory: 'التحليل (Analyze)',
+                difficulty: 'خبير (+50 XP)',
+                xpReward: 50,
+                title: '🕵️‍♂️ قضية سريّة: لغز هبوط المياه الجوفية',
+                description: 'أظهرت التقارير الهيدرولوجية في الخليج انخفاضاً سريعاً في المياه الجوفية وتملّح بعض الآبار. حلل العوامل التالية وحدد السبب الهيكلي الرئيس والمباشر الذي وضحه الدرس:',
+                type: 'mcq',
+                options: [
+                    'أ) النمو السكاني والتطور العمراني والصناعي الهائل دون تكامل مع الموارد.',
+                    'ب) انعدام الأمطار كلياً طوال الخمسين سنة الماضية.',
+                    'ج) عدم استخدام أي تقنيات حديثة في تحلية المياه.'
+                ],
+                correctOptionIndex: 0,
+                explanation: 'النمو السكاني السريع والتطور الحديث المعاصر في الصناعة والزراعة يستهلكان معظم الكميات المتاحة.'
+            },
+            {
+                id: 'm2',
+                bloomCategory: 'التقويم (Evaluate)',
+                difficulty: 'أسطوري (+100 XP)',
+                xpReward: 100,
+                title: '⚖️ محاكاة استراتيجية: ميزانية التنمية المائية 2030',
+                description: 'أمام وزراء المياه الخليجيين خياران استثماريان: (1) الاعتماد الكامل على بناء محطات تحلية البحر، أم (2) التوسع في معالجة وتكرير مياه الصرف الصحي مع حصاد الأمطار وتغليظ قوانين الترشيد. قيّم الخيارين مبرراً الاختيار الأكثر استدامة بيئياً واقتصادياً.',
+                type: 'evaluate_choice',
+                options: [
+                    'الخيار (2) هو الأفضل والأكثر استدامة: لأنه يقلل تكاليف واستهلاك الطاقة الباهظ للتوزيع ويحمي البيئة البحرية.',
+                    'الخيار (1) هو الأفضل كلياً: لأن تحلية البحر لا تتطلب أي توعية بالترشيد ولا تكاليف إضافية.'
+                ],
+                correctOptionIndex: 0,
+                explanation: 'الدرس يؤكد أهمية المعالجة الحيوية وتأمين المرافق وتوفير بدائل أقل كلفة للطاقة من تحلية النفط والغاز.'
+            },
+            {
+                id: 'm3',
+                bloomCategory: 'الابتكار (Create)',
+                difficulty: 'مهمة ابتكارية (+75 XP)',
+                xpReward: 75,
+                title: '💡 تحدي الابتكار: صمم شعاراً وحملة لجيل Z',
+                description: 'صمم فكرة مبتكرة لحملة توعوية رقمية على منصات التواصل الاجتماعي تجعل شباب الخليج يعتبرون قطرة الماء «أغلى من النفط» كما نص الدرس.',
+                type: 'text_creative',
+                promptPlaceholder: 'اكتب اسم عنوان الحملة، والشعار المبتكر، وآلية التأثير...'
+            },
+            {
+                id: 'm4',
+                bloomCategory: 'التحليل (Analyze)',
+                difficulty: 'صعبة (+35 XP)',
+                xpReward: 35,
+                title: '🧩 شفرة المسار: أين تضيع السيول والشرائح؟',
+                description: 'إذا هطلت الأمطار بغزارة في شبه الجزيرة العربية ولم تكن هناك سدود أو خزانات جوفية مستعدة، أين تذهب هذه المياه حسب نص الدرس؟',
+                type: 'mcq',
+                options: [
+                    'أ) تضيع وتتسرب بين الرمال القاحلة أو تتجه مباشرة للبحر دون فائدة.',
+                    'ب) تتحول تلقائياً إلى مياه مقطرة صالحة للشرب.',
+                    'ج) تخزن نفسها ذاتياً في الأنابيب المنزلية.'
+                ],
+                correctOptionIndex: 0,
+                explanation: 'الدرس يطالب بالاستفادة من الأمطار والسيول حتى لا تضيع في الرمال أو مياه البحر.'
+            },
+            {
+                id: 'm5',
+                bloomCategory: 'التقويم (Evaluate)',
+                difficulty: 'متوسطة (+20 XP)',
+                xpReward: 20,
+                title: '🔍 تقويم سلوك: كفاءة الاستهلاك المنزلي',
+                description: 'قيّم العبارة الآتية: «إن التنمية المائية تقع مسؤوليتها على الدولة والعلماء فقط وليس للمواطن دور فيها».',
+                type: 'mcq',
+                options: [
+                    'أ) عبارة خاطئة، فالترشيد والتوعية المجتمعية السلوكية للمواطن هي الأساس المستدام.',
+                    'ب) عبارة صحيحة تماماً.'
+                ],
+                correctOptionIndex: 0,
+                explanation: 'الدرس ينص صراحة على الدعوة الملاحة لترشيد الاستهلاك من كل أفراد المجتمع.'
+            },
+            {
+                id: 'm6',
+                bloomCategory: 'التطبيق والتحليل (Apply)',
+                difficulty: 'سهلة (+10 XP)',
+                xpReward: 10,
+                title: '⚡ الكشف العلمي: التقنيات الحديثة',
+                description: 'استخرج تقنية أو توجهاً واحداً يسعى إليه العلماء للكشف عن مواطن المياه في الخليج.',
+                type: 'mcq',
+                options: [
+                    'أ) البحث العلمي والتحري عن مواطن تجمع المياه الجوفية والبحث السيزمي.',
+                    'ب) الاعتماد المباشر على استيراد المياه بالناقلات.'
+                ],
+                correctOptionIndex: 0,
+                explanation: 'يتجه العلماء لمعرفة مواطن تجمع المياه الجوفية في المنطقة بالتطبيقات العلمية.'
+            }
+        ];
+
+        // Active Team State
+        let currentActiveTeamId = 1;
+        let currentModalGroup = null;
+
+        function renderActiveTeamSelect() {
+            const select = document.getElementById('activeTeamSelect');
+            if (!select) return;
+            select.innerHTML = groupsData.map(g => `
+                <option value="${g.id}" ${g.id === currentActiveTeamId ? 'selected' : ''}>
+                    ${g.avatar} ${g.name}
+                </option>
+            `).join('');
+        }
+
+        function changeActiveTeam(newId) {
+            currentActiveTeamId = parseInt(newId);
+            const team = groupsData.find(g => g.id === currentActiveTeamId);
+            if (team) {
+                showNotification('👤 تغيير الفريق النشط', `أنت الآن تتصفح وتشارك باسم فريق [${team.name}]`, 'info');
+            }
+            renderFeed();
+        }
+
+        function getGroupRank(groupId) {
+            const sorted = [...groupsData].sort((a, b) => b.xp - a.xp);
+            return sorted.findIndex(g => g.id === groupId) + 1;
+        }
+
+        function renderStories() {
+            const container = document.getElementById('storiesContainer');
+            if (!container) return;
+            container.innerHTML = groupsData.map(group => `
+                <div onclick="openGroupDetail(${group.id})" class="text-center cursor-pointer group flex flex-col items-center">
+                    <div class="story-ring p-[2px] rounded-full inline-block group-hover:scale-105 transition shadow-sm">
+                        <div class="w-14 h-14 rounded-full bg-white border-2 border-white flex items-center justify-center text-2xl relative">
+                            ${group.avatar}
+                            <span class="absolute -bottom-1 -right-1 bg-slate-900 text-amber-400 text-[10px] font-black px-1.5 py-0.2 rounded-full border border-white">
+                                L${group.level}
+                            </span>
+                        </div>
+                    </div>
+                    <p class="text-[11px] font-bold text-slate-800 mt-1 truncate max-w-[70px]">${group.name}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderFeed() {
+            const feed = document.getElementById('feedContainer');
+            if (!feed) return;
+
+            const currentActiveGroup = groupsData.find(g => g.id === currentActiveTeamId) || groupsData[0];
+
+            feed.innerHTML = groupsData.map(group => {
+                const mission = missionPool[group.activeMissionIndex % missionPool.length];
+                
+                return `
+                <!-- GROUP CARD -->
+                <article class="bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden transition hover:shadow-md">
+                    
+                    <!-- Card Header -->
+                    <div class="p-4 flex items-center justify-between border-b border-slate-100">
+                        <div class="flex items-center gap-3">
+                            <div class="story-ring p-[2px] rounded-full">
+                                <div class="w-11 h-11 rounded-full bg-slate-100 flex items-center justify-center text-2xl border border-white">
+                                    ${group.avatar}
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="font-black text-slate-900 text-sm sm:text-base">${group.name}</h3>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+                                        المستوى ${group.level} • ${group.levelTitle}
+                                    </span>
+                                </div>
+                                <p class="text-[11px] text-slate-500 font-semibold flex items-center gap-2 mt-0.5">
+                                    <span>🏆 المركز #${getGroupRank(group.id)}</span>
+                                    <span>•</span>
+                                    <span class="text-emerald-600">⚡ ${group.xp} XP</span>
+                                    <span>•</span>
+                                    <span class="text-amber-600">🔥 سلسلة ${group.streak} أيام</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Mission Lock / Badge Toggle -->
+                        <div>
+                            ${group.missionLocked ? `
+                                <span class="px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-black flex items-center gap-1 animate-pulse">
+                                    <i class="fa-solid fa-lock text-amber-500"></i> المهمة قيد الحل
+                                </span>
+                            ` : `
+                                <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-black flex items-center gap-1">
+                                    <i class="fa-solid fa-circle-check text-emerald-500"></i> تم نشر الحل
+                                </span>
+                            `}
+                        </div>
+                    </div>
+
+                    <!-- Visual Interactive Banner for Mission & Published Answer -->
+                    <div class="bg-gradient-to-br from-slate-900 via-sky-950 to-slate-900 p-5 text-white relative overflow-hidden">
+                        <div class="absolute right-0 top-0 w-32 h-32 bg-sky-500/10 rounded-full blur-2xl"></div>
+                        
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="px-2.5 py-0.5 rounded-full bg-white/10 text-cyan-300 text-[11px] font-bold border border-white/10">
+                                🎯 ${mission.bloomCategory}
+                            </span>
+                            <span class="text-xs text-amber-300 font-bold">
+                                مكافأة: ${mission.difficulty}
+                            </span>
+                        </div>
+
+                        <h4 class="text-base sm:text-lg font-black mb-1.5 leading-snug">
+                            ${mission.title}
+                        </h4>
+                        
+                        <p class="text-xs text-slate-300 font-medium mb-3">
+                            ${mission.description}
+                        </p>
+
+                        <!-- PUBLISHED TEAM SOLUTION DISPLAY BOX -->
+                        ${group.submittedAnswer ? `
+                            <div class="my-3 p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-right shadow-inner animate-in fade-in duration-300">
+                                <div class="flex items-center justify-between text-xs text-emerald-300 font-bold mb-1.5 border-b border-white/10 pb-1">
+                                    <span class="flex items-center gap-1.5">
+                                        <i class="fa-solid fa-circle-check text-emerald-400"></i> 
+                                        إجابة ${group.name} المنشورة للجميع:
+                                    </span>
+                                    <span class="text-[10px] text-slate-300 font-normal">${group.submittedTime || 'مُحدث حديثاً'}</span>
+                                </div>
+                                <p class="text-xs sm:text-sm text-white font-semibold leading-relaxed bg-black/20 p-2.5 rounded-xl border border-white/5">
+                                    « ${group.submittedAnswer} »
+                                </p>
+                            </div>
+                        ` : `
+                            <div class="my-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-200 font-bold flex items-center gap-2">
+                                <i class="fa-solid fa-hourglass-half animate-spin"></i>
+                                <span>الفريق يعكف حالياً على حل هذه القضية المائية ونشر إجابته...</span>
+                            </div>
+                        `}
+
+                        <!-- Action Buttons Inside Post Image Area -->
+                        <div class="flex items-center justify-between gap-2 mt-3">
+                            <button onclick="openMissionModal(${group.id})" class="flex-1 py-2.5 px-4 rounded-xl bg-insta-gradient text-white font-black text-xs sm:text-sm shadow-lg hover:opacity-95 transition active:scale-95 flex items-center justify-center gap-2">
+                                <i class="fa-solid ${group.missionLocked ? 'fa-key' : 'fa-pen-to-square'}"></i>
+                                <span>${group.missionLocked ? 'حل التحدي ونشر الإجابة' : 'تعديل أو إعادة نشر الحل'}</span>
+                            </button>
+
+                            <button onclick="changeMissionActionDirect(${group.id})" class="py-2.5 px-3 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-slate-200 border border-white/10 transition flex items-center gap-1">
+                                <i class="fa-solid fa-rotate text-amber-400"></i>
+                                <span class="hidden sm:inline">تغيير</span>
+                                <span class="text-[10px] text-amber-300">(-5XP)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Badges Row -->
+                    <div class="px-4 py-2 bg-slate-50 border-b border-slate-100 flex items-center gap-2 overflow-x-auto">
+                        <span class="text-[10px] font-bold text-slate-400">أوسمة الفريق:</span>
+                        ${group.badges.map(b => `
+                            <span class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[11px] font-bold text-slate-700 shadow-2xs whitespace-nowrap">
+                                ${b}
+                            </span>
+                        `).join('')}
+                    </div>
+
+                    <!-- INSTAGRAM REACTION BAR -->
+                    <div class="p-4 border-b border-slate-100 relative" id="reactionBar-${group.id}">
+                        <div class="text-xs font-bold text-slate-600 mb-2 flex items-center justify-between">
+                            <span>💬 تفاعل مع إجابة ${group.name} باسم <span class="text-pink-600 font-black">${currentActiveGroup.name}</span>:</span>
+                            <span class="text-[10px] text-pink-600 font-extrabold">+XP فوري للطرفين</span>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                            <button onclick="addReaction(${group.id}, 'love', 2, '❤️', event)" class="px-2.5 py-1.5 rounded-full bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 font-bold text-xs flex items-center gap-1 transition active:scale-90">
+                                <span>❤️</span>
+                                <span>${group.reactions.love}</span>
+                            </button>
+
+                            <button onclick="addReaction(${group.id}, 'fire', 3, '🔥', event)" class="px-2.5 py-1.5 rounded-full bg-orange-50 hover:bg-orange-100 border border-orange-200 text-orange-600 font-bold text-xs flex items-center gap-1 transition active:scale-90">
+                                <span>🔥</span>
+                                <span>${group.reactions.fire}</span>
+                            </button>
+
+                            <button onclick="addReaction(${group.id}, 'clap', 1, '👏', event)" class="px-2.5 py-1.5 rounded-full bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 font-bold text-xs flex items-center gap-1 transition active:scale-90">
+                                <span>👏</span>
+                                <span>${group.reactions.clap}</span>
+                            </button>
+
+                            <button onclick="addReaction(${group.id}, 'star', 4, '⭐', event)" class="px-2.5 py-1.5 rounded-full bg-yellow-50 hover:bg-yellow-100 border border-yellow-200 text-yellow-700 font-bold text-xs flex items-center gap-1 transition active:scale-90">
+                                <span>⭐</span>
+                                <span>${group.reactions.star}</span>
+                            </button>
+
+                            <button onclick="addReaction(${group.id}, 'rocket', 5, '🚀', event)" class="px-2.5 py-1.5 rounded-full bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-600 font-bold text-xs flex items-center gap-1 transition active:scale-90">
+                                <span>🚀</span>
+                                <span>${group.reactions.rocket}</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- COMMENTS SECTION -->
+                    <div class="p-4 bg-slate-50/50">
+                        <div class="space-y-2 max-h-40 overflow-y-auto mb-3 pr-1" id="commentsList-${group.id}">
+                            ${group.comments.length === 0 ? `
+                                <p class="text-xs text-slate-400 italic font-medium p-2 text-center bg-white rounded-xl border border-dashed border-slate-200">
+                                    لا توجد تعليقات بعد.. كن أول فريق يناقش إجابتهم!
+                                </p>
+                            ` : group.comments.map(c => `
+                                <div class="text-xs bg-white p-2.5 rounded-2xl border border-pink-100 shadow-2xs transition hover:border-pink-300">
+                                    <div class="flex items-center justify-between font-bold text-slate-800 mb-1 border-b border-slate-100 pb-1.5">
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-6 h-6 rounded-full bg-gradient-to-tr from-pink-500 to-rose-500 text-white flex items-center justify-center text-xs shadow-2xs">
+                                                ${c.authorAvatar || '👥'}
+                                            </span>
+                                            <span class="text-pink-600 font-black text-xs">
+                                                ${c.author}
+                                            </span>
+                                            <span class="px-2 py-0.5 rounded-full bg-pink-50 text-[9px] font-black text-pink-700 border border-pink-200">
+                                                فريق مُعلّق
+                                            </span>
+                                        </div>
+                                        <span class="text-[10px] text-slate-400 font-normal">${c.time}</span>
+                                    </div>
+                                    <p class="text-slate-700 font-semibold pr-1">${c.text}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Active Commenter Identity Banner -->
+                        <div class="p-2.5 rounded-2xl bg-gradient-to-r from-pink-50 via-purple-50 to-sky-50 border border-pink-200/80 mb-2.5 flex items-center justify-between shadow-2xs">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-full bg-white shadow-xs border border-pink-300 flex items-center justify-center text-base">
+                                    ${currentActiveGroup.avatar}
+                                </div>
+                                <div>
+                                    <div class="text-[10px] text-pink-700 font-bold">تكتب تعليقك الآن بصفتك:</div>
+                                    <div class="text-xs font-black text-slate-900 flex items-center gap-1">
+                                        <span>فريق ${currentActiveGroup.name}</span>
+                                        <span class="text-[10px] text-emerald-600 font-bold">(+5 XP)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button onclick="openTeamSwitchModal()" class="text-[11px] bg-white hover:bg-pink-100 text-pink-700 font-black px-3 py-1.5 rounded-xl border border-pink-300 transition shadow-2xs flex items-center gap-1.5 active:scale-95">
+                                <i class="fa-solid fa-arrows-rotate text-pink-500"></i>
+                                <span>تبديل الفريق</span>
+                            </button>
+                        </div>
+
+                        <!-- Custom Comment Input Box -->
+                        <div class="flex gap-2">
+                            <input type="text" id="commentInput-${group.id}" placeholder="اكتب تعليقك باسم [${currentActiveGroup.name}] (+5 XP)..." 
+                                class="flex-1 bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-pink-500 focus:outline-none font-semibold">
+                            <button onclick="submitCustomComment(${group.id})" class="px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-black hover:bg-slate-800 transition active:scale-95 flex items-center gap-1">
+                                <span>إرسال</span>
+                                <i class="fa-solid fa-paper-plane text-[10px]"></i>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+                `;
+            }).join('');
+        }
+
+        function renderMiniLeaderboard() {
+            const sorted = [...groupsData].sort((a, b) => b.xp - a.xp);
+            const container = document.getElementById('miniLeaderboard');
+            if (!container) return;
+            
+            container.innerHTML = sorted.slice(0, 5).map((g, idx) => {
+                const trophies = ['🥇', '🥈', '🥉'];
+                const badge = trophies[idx] || `#${idx + 1}`;
+                
+                return `
+                    <div class="flex items-center justify-between p-2 rounded-xl ${idx === 0 ? 'bg-amber-50 border border-amber-200' : 'bg-slate-50'}">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-6 text-center font-black text-sm">${badge}</span>
+                            <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-lg border border-slate-200 shadow-2xs">
+                                ${g.avatar}
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xs text-slate-800">${g.name}</h4>
+                                <span class="text-[10px] text-slate-500">مستوى ${g.level}</span>
+                            </div>
+                        </div>
+                        <span class="font-black text-xs text-pink-600">${g.xp} XP</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // POWERSCHOOL DYNAMIC ASSESSMENT LOGIC
+        function calculatePowerSchoolScore(group) {
+            // Max base XP target = 250 XP
+            const xpScore = Math.min(100, (group.xp / 250) * 100);
+            const missionScore = (group.completedMissions / 3) * 100;
+            const respectScore = group.respect;
+
+            // Weighted Grade Calculation (60% Missions & XP, 25% Engagement, 15% Digital Citizenship)
+            const overallScorePercent = Math.min(100, Math.round((xpScore * 0.3) + (missionScore * 0.4) + (respectScore * 0.3)));
+            const scoreOutOf20 = ((overallScorePercent / 100) * 20).toFixed(1);
+
+            let letterGrade = 'A+';
+            if (overallScorePercent < 60) letterGrade = 'F';
+            else if (overallScorePercent < 70) letterGrade = 'D';
+            else if (overallScorePercent < 80) letterGrade = 'C';
+            else if (overallScorePercent < 90) letterGrade = 'B';
+            else if (overallScorePercent < 95) letterGrade = 'A';
+
+            let note = 'مشاركة متميزة وتفكير ناقد';
+            if (overallScorePercent < 75) note = 'يحتاج مزيداً من التفاعل مع المهام';
+            else if (overallScorePercent >= 90) note = 'حلول ابتكارية وقيادة ممتازة للفريق';
+
+            return {
+                overallPercent: overallScorePercent,
+                scoreOutOf20: scoreOutOf20,
+                letterGrade: letterGrade,
+                note: note
+            };
+        }
+
+        function renderPowerSchoolModalContent() {
+            const tbody = document.getElementById('powerSchoolTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = groupsData.map(group => {
+                const evalData = calculatePowerSchoolScore(group);
+                const totalReactions = Object.values(group.reactions).reduce((a, b) => a + b, 0);
+
+                return `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-3 font-black text-slate-900 flex items-center gap-2">
+                            <span class="text-xl">${group.avatar}</span>
+                            <span>${group.name}</span>
+                        </td>
+                        <td class="p-3 text-center text-pink-600 font-extrabold">${group.xp} XP</td>
+                        <td class="p-3 text-center font-bold text-slate-700">${group.completedMissions} مهمات</td>
+                        <td class="p-3 text-center text-emerald-600 font-bold">${totalReactions} تفاعلاً (${group.respect}%)</td>
+                        <td class="p-3 text-center font-black text-sm text-indigo-700 bg-indigo-50/50">${evalData.scoreOutOf20} / 20</td>
+                        <td class="p-3 text-center font-black text-emerald-600">${evalData.overallPercent}%</td>
+                        <td class="p-3 text-center">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-black ${evalData.overallPercent >= 85 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                                ${evalData.letterGrade}
+                            </span>
+                        </td>
+                        <td class="p-3 text-center text-[11px] text-slate-500 italic">${evalData.note}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function openPowerSchoolModal() {
+            renderPowerSchoolModalContent();
+            document.getElementById('powerSchoolModal').classList.remove('hidden');
+        }
+
+        function closePowerSchoolModal() {
+            document.getElementById('powerSchoolModal').classList.add('hidden');
+        }
+
+        function copyPowerSchoolTable() {
+            let textToCopy = "اسم الفريق / الطالب\tXP\tالمهمات\tالدرجة (20)\tالنسبة %\tالتقدير\tالملاحظات\n";
+            groupsData.forEach(g => {
+                const e = calculatePowerSchoolScore(g);
+                textToCopy += `${g.name}\t${g.xp}\t${g.completedMissions}\t${e.scoreOutOf20}\t${e.overallPercent}%\t${e.letterGrade}\t${e.note}\n`;
+            });
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showNotification('📋 تم نسخ البيانات', 'تم نسخ جدول درجات PowerSchool إلى المحفظة بنجاح! جاهز للصق.', 'success');
+            }).catch(() => {
+                showNotification('تنبيه', 'تعذر النسخ التلقائي. يمكنك تحديد الجدول ونسخه يدوياً.', 'error');
+            });
+        }
+
+        function exportPowerSchoolCSV() {
+            let csv = "\uFEFFاسم الفريق / الطالب,النقاط XP,المهمات المنجزة,الدرجة من 20,النسبة المئوية,التقدير,الملاحظات\n";
+            groupsData.forEach(g => {
+                const e = calculatePowerSchoolScore(g);
+                csv += `"${g.name}",${g.xp},${g.completedMissions},${e.scoreOutOf20},${e.overallPercent}%,${e.letterGrade},"${e.note}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `PowerSchool_Grades_GulfWater_Class8.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showNotification('📥 تم تحضير الملف', 'تم تنزيل ملف CSV الخاص بنظام PowerSchool بنجاح!', 'success');
+        }
+
+        function addReaction(groupId, type, points, emoji, event) {
+            const group = groupsData.find(g => g.id === groupId);
+            if (!group) return;
+
+            group.reactions[type] = (group.reactions[type] || 0) + 1;
+            group.xp += points;
+
+            checkLevelUp(group);
+            playReactionSound();
+            spawnFloatingEmoji(event.clientX, event.clientY, emoji);
+
+            renderFeed();
+            renderMiniLeaderboard();
+        }
+
+        function spawnFloatingEmoji(x, y, emoji) {
+            const el = document.createElement('div');
+            el.className = 'floating-emoji';
+            el.innerText = emoji;
+            el.style.left = (x - 15) + 'px';
+            el.style.top = (y - 20) + 'px';
+            document.body.appendChild(el);
+
+            setTimeout(() => {
+                el.remove();
+            }, 1200);
+        }
+
+        const negativeKeywords = ['سيء', 'غبي', 'فاشل', 'ضعيف', 'احذف', 'سخيف', 'حمار', 'زفت', 'نكتة', 'لا تفهم'];
+
+        function submitCustomComment(groupId) {
+            const input = document.getElementById(`commentInput-${groupId}`);
+            if (!input) return;
+            const text = input.value.trim();
+            if (!text) return;
+
+            processComment(groupId, text);
+            input.value = '';
+        }
+
+        function processComment(groupId, text) {
+            const targetGroup = groupsData.find(g => g.id === groupId);
+            const senderGroup = groupsData.find(g => g.id === currentActiveTeamId);
+            if (!targetGroup || !senderGroup) return;
+
+            const isNegative = negativeKeywords.some(kw => text.includes(kw));
+
+            if (isNegative) {
+                playPenaltySound();
+                senderGroup.xp = Math.max(0, senderGroup.xp - 5);
+                senderGroup.respect = Math.max(50, senderGroup.respect - 5);
+                
+                showNotification('⚠️ تعليق غير لائق', `تم خصم -5 XP من فريق [${senderGroup.name}]. تذكر أن الكلمة الطيبة تبني المهارات!`, 'error');
+            } else {
+                playSuccessSound();
+                senderGroup.xp += 5;
+                targetGroup.respect = Math.min(100, targetGroup.respect + 2);
+
+                targetGroup.comments.unshift({
+                    author: senderGroup.name,
+                    authorAvatar: senderGroup.avatar,
+                    text: text,
+                    positive: true,
+                    time: 'الآن'
+                });
+
+                showNotification('✨ تعليق مشجع!', `أحسنت يا فريق [${senderGroup.name}]! تم منحكم +5 XP لتعليقكم المشجع باسمكم على إجابة [${targetGroup.name}].`, 'success');
+            }
+
+            checkLevelUp(senderGroup);
+            updateGlobalRespectMeter();
+            renderFeed();
+            renderMiniLeaderboard();
+        }
+
+        function openTeamSwitchModal() {
+            const modalHtml = `
+                <div id="teamSwitchModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+                    <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl border border-slate-100 relative animate-in zoom-in-95 duration-200">
+                        <button onclick="document.getElementById('teamSwitchModal').remove()" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                        
+                        <div class="text-center mb-4">
+                            <div class="w-12 h-12 rounded-full bg-pink-100 text-pink-600 mx-auto flex items-center justify-center text-2xl mb-1">
+                                🎭
+                            </div>
+                            <h3 class="text-base font-black text-slate-800">اختر فريقك للمشاركة والتعليق</h3>
+                            <p class="text-xs text-slate-500">حدد الفريق الذي يمثلك الآن لكسب النقاط باسمه</p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 mb-4">
+                            ${groupsData.map(g => `
+                                <button onclick="selectTeamFromModal(${g.id})" class="p-3 rounded-2xl border ${g.id === currentActiveTeamId ? 'border-pink-500 bg-pink-50/80 ring-2 ring-pink-400' : 'border-slate-200 bg-white hover:bg-slate-50'} text-right transition flex items-center gap-2.5">
+                                    <span class="text-2xl">${g.avatar}</span>
+                                    <div>
+                                        <div class="text-xs font-black text-slate-800">${g.name}</div>
+                                        <div class="text-[10px] text-pink-600 font-bold">${g.xp} XP</div>
+                                    </div>
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+
+        function selectTeamFromModal(teamId) {
+            changeActiveTeam(teamId);
+            const modal = document.getElementById('teamSwitchModal');
+            if (modal) modal.remove();
+        }
+
+        function updateGlobalRespectMeter() {
+            const avgRespect = Math.round(groupsData.reduce((acc, g) => acc + g.respect, 0) / groupsData.length);
+            const valEl = document.getElementById('globalRespectVal');
+            const barEl = document.getElementById('globalRespectBar');
+            if (valEl && barEl) {
+                valEl.innerText = `${avgRespect}%`;
+                barEl.style.width = `${avgRespect}%`;
+            }
+        }
+
+        function openMissionModal(groupId) {
+            const group = groupsData.find(g => g.id === groupId);
+            if (!group) return;
+
+            currentModalGroup = group;
+            const mission = missionPool[group.activeMissionIndex % missionPool.length];
+
+            document.getElementById('modalGroupAvatar').innerText = group.avatar;
+            document.getElementById('modalGroupName').innerText = group.name;
+            document.getElementById('modalMissionMeta').innerText = `المهمة #${mission.id} • صعوبة: ${mission.difficulty}`;
+            document.getElementById('modalBloomCategory').innerText = mission.bloomCategory;
+            document.getElementById('modalMissionTitle').innerText = mission.title;
+            document.getElementById('modalMissionDesc').innerText = mission.description;
+
+            const area = document.getElementById('modalInteractiveArea');
+            
+            if (mission.type === 'mcq' || mission.type === 'evaluate_choice') {
+                area.innerHTML = mission.options.map((opt, idx) => `
+                    <label class="flex items-start gap-3 p-3.5 rounded-2xl border border-slate-200 hover:border-pink-500 hover:bg-pink-50/50 cursor-pointer transition">
+                        <input type="radio" name="missionChoice" value="${idx}" class="mt-1 text-pink-600 focus:ring-pink-500">
+                        <span class="text-xs sm:text-sm font-bold text-slate-800 leading-relaxed">${opt}</span>
+                    </label>
+                `).join('');
+            } else if (mission.type === 'text_creative') {
+                area.innerHTML = `
+                    <textarea id="creativeAnswerText" rows="4" placeholder="${mission.promptPlaceholder}" 
+                        class="w-full text-xs sm:text-sm p-3.5 rounded-2xl border border-slate-300 focus:ring-2 focus:ring-pink-500 focus:outline-none font-medium"></textarea>
+                `;
+            }
+
+            document.getElementById('missionModal').classList.remove('hidden');
+        }
+
+        function closeMissionModal() {
+            document.getElementById('missionModal').classList.add('hidden');
+            currentModalGroup = null;
+        }
+
+        function changeMissionActionDirect(groupId) {
+            const group = groupsData.find(g => g.id === groupId);
+            if (!group) return;
+
+            if (group.xp < 5) {
+                showNotification('تنبيه', 'لا يوجد رصيد XP كافٍ لتغيير المهمة.', 'error');
+                return;
+            }
+
+            group.xp -= 5;
+            group.activeMissionIndex = (group.activeMissionIndex + 1) % missionPool.length;
+            
+            playTone(300, 'sine', 0.2, 0.1);
+            showNotification('🔄 تم تغيير المهمة', 'تم اختيار تحدٍ جديد وتخصيص -5 XP.', 'info');
+
+            renderFeed();
+            renderMiniLeaderboard();
+        }
+
+        function changeMissionAction() {
+            if (currentModalGroup) {
+                changeMissionActionDirect(currentModalGroup.id);
+                closeMissionModal();
+            }
+        }
+
+        function submitMissionAnswer() {
+            if (!currentModalGroup) return;
+
+            const mission = missionPool[currentModalGroup.activeMissionIndex % missionPool.length];
+            let isCorrect = true;
+            let submittedAnswerText = '';
+
+            if (mission.type === 'mcq' || mission.type === 'evaluate_choice') {
+                const selected = document.querySelector('input[name="missionChoice"]:checked');
+                if (!selected) {
+                    showNotification('تنبيه', 'يرجى اختيار إجابة أولاً!', 'error');
+                    return;
+                }
+                const selectedIndex = parseInt(selected.value);
+                submittedAnswerText = mission.options[selectedIndex];
+
+                if (selectedIndex !== mission.correctOptionIndex) {
+                    isCorrect = false;
+                }
+            } else if (mission.type === 'text_creative') {
+                const text = document.getElementById('creativeAnswerText').value.trim();
+                if (text.length < 10) {
+                    showNotification('تنبيه', 'يرجى كتابة مقترح ابتكاري مكتمل التفاصيل!', 'error');
+                    return;
+                }
+                submittedAnswerText = text;
+            }
+
+            if (isCorrect) {
+                currentModalGroup.xp += mission.xpReward;
+                currentModalGroup.missionLocked = false;
+                currentModalGroup.completedMissions += 1;
+                currentModalGroup.streak += 1;
+                currentModalGroup.submittedAnswer = submittedAnswerText;
+                currentModalGroup.submittedTime = 'الآن';
+
+                playSuccessSound();
+                triggerConfetti();
+
+                showNotification('🎉 تم نشر الإجابة بنجاح!', `أحسنت! أُضيفت إجابة فريقك إلى منشور الصف ليتفاعل معها الجميع (+${mission.xpReward} XP).`, 'success');
+                checkLevelUp(currentModalGroup);
+            } else {
+                playPenaltySound();
+                showNotification('❌ حاول مجدداً', 'إجابة تحتاج لمزيد من المراجعة للدرس. راجع النص ثم حاول مرة أخرى.', 'error');
+            }
+
+            closeMissionModal();
+            renderFeed();
+            renderMiniLeaderboard();
+        }
+
+        function checkLevelUp(group) {
+            const oldLevel = group.level;
+            if (group.xp >= 300) {
+                group.level = 5;
+                group.levelTitle = 'الأسطورة';
+            } else if (group.xp >= 220) {
+                group.level = 4;
+                group.levelTitle = 'العقل المدبر';
+            } else if (group.xp >= 150) {
+                group.level = 3;
+                group.levelTitle = 'المبتكر';
+            } else if (group.xp >= 80) {
+                group.level = 2;
+                group.levelTitle = 'المطور';
+            }
+
+            if (group.level > oldLevel) {
+                triggerConfetti();
+                showNotification('🚀 ترقية مستوى!', `تهانينا لـ ${group.name}! ارتقوا إلى المستوى ${group.level} (${group.levelTitle}).`, 'success');
+            }
+        }
+
+        function showNotification(title, message, type = 'info') {
+            const toast = document.createElement('div');
+            const bgClass = type === 'success' ? 'bg-emerald-900 border-emerald-500' : 
+                            type === 'error' ? 'bg-rose-900 border-rose-500' : 'bg-slate-900 border-sky-500';
+
+            toast.className = `fixed bottom-5 right-5 z-50 text-white p-4 rounded-2xl border shadow-2xl max-w-xs animate-in slide-in-from-bottom duration-300 ${bgClass}`;
+            toast.innerHTML = `
+                <div class="flex items-start gap-3">
+                    <div class="text-xl">
+                        ${type === 'success' ? '🏆' : type === 'error' ? '⚠️' : '✨'}
+                    </div>
+                    <div>
+                        <h4 class="font-black text-xs sm:text-sm text-white">${title}</h4>
+                        <p class="text-[11px] text-slate-200 mt-0.5 leading-snug font-medium">${message}</p>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3500);
+        }
+
+        function triggerRandomBonusEvent() {
+            playSuccessSound();
+            triggerConfetti();
+
+            const randomGroup = groupsData[Math.floor(Math.random() * groupsData.length)];
+            const bonusXP = 40;
+            randomGroup.xp += bonusXP;
+
+            showNotification(
+                '🎁 حدث استثنائي: صندوق الأسرار المائي!',
+                `فاز فريق [${randomGroup.name}] بـ +${bonusXP} XP بفضل المتابعة النشطة والمشاركة الإيجابية!`,
+                'success'
+            );
+
+            renderFeed();
+            renderMiniLeaderboard();
+        }
+
+        function openLeaderboardModal() {
+            const sorted = [...groupsData].sort((a, b) => b.xp - a.xp);
+            const container = document.getElementById('fullLeaderboardList');
+            if (!container) return;
+
+            container.innerHTML = sorted.map((g, idx) => `
+                <div class="p-3.5 rounded-2xl border border-slate-200 bg-white shadow-xs flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="font-black text-base w-6 text-center text-slate-700">#${idx + 1}</span>
+                        <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-xl shadow-2xs">
+                            ${g.avatar}
+                        </div>
+                        <div>
+                            <h4 class="font-black text-sm text-slate-900">${g.name}</h4>
+                            <p class="text-[11px] text-slate-500 font-bold">
+                                مستوى ${g.level} • ${g.completedMissions} مهمات منجزة
+                            </p>
+                        </div>
+                    </div>
+                    <div class="text-left">
+                        <span class="block font-black text-sm text-pink-600">${g.xp} XP</span>
+                        <span class="text-[10px] text-emerald-600 font-bold">احترام ${g.respect}%</span>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('leaderboardModal').classList.remove('hidden');
+        }
+
+        function closeLeaderboardModal() {
+            document.getElementById('leaderboardModal').classList.add('hidden');
+        }
+
+        function openLessonOverviewModal() {
+            document.getElementById('lessonModal').classList.remove('hidden');
+        }
+
+        function closeLessonModal() {
+            document.getElementById('lessonModal').classList.add('hidden');
+        }
+
+        function openGroupDetail(groupId) {
+            const group = groupsData.find(g => g.id === groupId);
+            if (group) {
+                openMissionModal(group.id);
+            }
+        }
+
+        // Particle Effects (Confetti)
+        const canvas = document.getElementById('fxCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function triggerConfetti() {
+            for (let i = 0; i < 70; i++) {
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 3,
+                    vx: (Math.random() - 0.5) * 12,
+                    vy: (Math.random() - 0.8) * 12,
+                    color: `hsl(${Math.random() * 360}, 90%, 60%)`,
+                    size: Math.random() * 7 + 3,
+                    alpha: 1
+                });
+            }
+        }
+
+        function animateFX() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, idx) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.2;
+                p.alpha -= 0.015;
+
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, p.alpha);
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+
+                if (p.alpha <= 0) {
+                    particles.splice(idx, 1);
+                }
+            });
+            requestAnimationFrame(animateFX);
+        }
+
+        // Shared classroom events, persisted by Netlify Blobs via serverless function.
+        // The server, not the browser, stores all accepted contributions.
+        const originalGroupsSnapshot = JSON.parse(JSON.stringify(groupsData));
+        let classroomConnected = false;
+        let eventsSnapshot = [];
+        let syncInProgress = false;
+        const eventsUrl = '/.netlify/functions/events';
+        const badWords = ['سيء','غبي','فاشل','ضعيف','احذف','سخيف','حمار','زفت','نكتة','لا تفهم'];
+        const reactionScores = {love:2,fire:3,clap:1,star:4,rocket:5};
+
+        function safeText(t) {
+            return String(t).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        }
+        function setSyncStatus(connected, detail) {
+            classroomConnected = connected;
+            const el = document.getElementById('syncStatus');
+            if(!el)return;
+            el.className = connected ? 'bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2 text-xs font-bold text-emerald-800' : 'bg-rose-50 border border-rose-200 rounded-xl px-4 py-2 text-xs font-bold text-rose-800';
+            el.textContent = connected ? '🟢 متصل — التعليقات والإجابات والنقاط مشتركة بين أجهزة الصف (تحديث كل 4 ثوانٍ).' : '🔴 تعذر الاتصال بالمزامنة. لا تُرسلوا مشاركات الآن. ' + (detail || '');
+        }
+        async function sendClassEvent(payload) {
+            if (!classroomConnected) {showNotification('المزامنة غير متاحة','تحققي من اتصال الموقع بقاعدة البيانات قبل الإرسال.','error');return false;}
+            try {
+                const response = await fetch(eventsUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+                if(!response.ok)throw new Error('لم تُحفظ المشاركة على الخادم');
+                await syncClassroom();
+                return true;
+            } catch(error) {setSyncStatus(false,error.message);showNotification('لم تُحفظ المشاركة','أعيدي المحاولة بعد عودة الاتصال.','error');return false;}
+        }
+        function replayEvents(events) {
+            groupsData.splice(0,groupsData.length,...JSON.parse(JSON.stringify(originalGroupsSnapshot)));
+            const negative=badWords;
+            for(const e of events) {
+                const sender=groupsData.find(g=>g.id===e.teamId);
+                const target=groupsData.find(g=>g.id===e.targetId);
+                if(!sender)continue;
+                if(e.type==='comment'&&target&&typeof e.text==='string') {
+                    if(negative.some(w=>e.text.includes(w))){sender.xp=Math.max(0,sender.xp-5);sender.respect=Math.max(50,sender.respect-5);}
+                    else {sender.xp+=5;target.respect=Math.min(100,target.respect+2);target.comments.unshift({author:sender.name,authorAvatar:sender.avatar,text:safeText(e.text),positive:true,time:'مشاركة صفية'});}
+                } else if(e.type==='reaction'&&target&&reactionScores[e.reaction]) {
+                    target.reactions[e.reaction]=(target.reactions[e.reaction]||0)+1;
+                    target.xp+=reactionScores[e.reaction];
+                } else if(e.type==='mission'&&Number.isInteger(e.missionIndex)&&e.missionIndex>=0&&e.missionIndex<missionPool.length) {
+                    const m=missionPool[e.missionIndex];
+                    sender.xp+=m.xpReward;
+                    sender.missionLocked=false;
+                    sender.completedMissions++;
+                    sender.streak++;
+                    sender.submittedAnswer=safeText(e.answer||'');
+                    sender.submittedTime='مشاركة صفية';
+                    sender.activeMissionIndex=e.missionIndex;
+                } else if(e.type==='change') {
+                    if(sender.xp>=5){sender.xp-=5;sender.activeMissionIndex=(sender.activeMissionIndex+1)%missionPool.length;}
+                } else if(e.type==='bonus')sender.xp+=40;
+                // Recalculate level without visual effects on remote updates.
+                if(sender.xp>=300){sender.level=5;sender.levelTitle='الأسطورة';}
+                else if(sender.xp>=220){sender.level=4;sender.levelTitle='العقل المدبر';}
+                else if(sender.xp>=150){sender.level=3;sender.levelTitle='المبتكر';}
+                else if(sender.xp>=80){sender.level=2;sender.levelTitle='المطور';}
+                if(target&&target!==sender){if(target.xp>=300){target.level=5;target.levelTitle='الأسطورة';}else if(target.xp>=220){target.level=4;target.levelTitle='العقل المدبر';}else if(target.xp>=150){target.level=3;target.levelTitle='المبتكر';}}
+            }
+            renderActiveTeamSelect();renderStories();renderFeed();renderMiniLeaderboard();updateGlobalRespectMeter();
+            const grades=document.getElementById('powerSchoolModal');
+            if(grades&&!grades.classList.contains('hidden'))renderPowerSchoolModalContent();
+        }
+        async function syncClassroom() {
+            if(syncInProgress)return;
+            syncInProgress=true;
+            try{
+                const r=await fetch(eventsUrl,{cache:'no-store'});
+                if(!r.ok)throw new Error('خطأ '+r.status);
+                const data=await r.json();
+                if(!Array.isArray(data.events))throw new Error('استجابة غير صالحة');
+                if(JSON.stringify(data.events)!==JSON.stringify(eventsSnapshot)){
+                    eventsSnapshot=data.events;
+                    replayEvents(eventsSnapshot);
+                }
+                setSyncStatus(true);
+            }catch(error){setSyncStatus(false,'يجب نشر مجلد الموقع كاملًا في Netlify.');}
+            finally{syncInProgress=false;}
+        }
+        // Replace client-only actions with server-persisted classroom events.
+        addReaction = async function(groupId,type,points,emoji,event){
+            const x=event?.clientX||0,y=event?.clientY||0;
+            if(await sendClassEvent({type:'reaction',teamId:currentActiveTeamId,targetId:groupId,reaction:type})){
+                playReactionSound();if(x&&y)spawnFloatingEmoji(x,y,emoji);
+            }
+        };
+        processComment = async function(groupId,text){
+            if(text.length>500){showNotification('التعليق طويل','الحد الأقصى 500 حرف.','error');return;}
+            const ok=await sendClassEvent({type:'comment',teamId:currentActiveTeamId,targetId:groupId,text});
+            if(ok)showNotification('تم نشر التعليق','ظهر التعليق لجميع الأجهزة المتصلة.','success');
+        };
+        submitMissionAnswer = async function(){
+            if(!currentModalGroup)return;
+            const groupId=currentModalGroup.id;
+            const index=currentModalGroup.activeMissionIndex%missionPool.length;
+            const mission=missionPool[index];
+            let answer='',choice;
+            if(mission.type==='mcq'||mission.type==='evaluate_choice'){
+                const selected=document.querySelector('input[name="missionChoice"]:checked');
+                if(!selected){showNotification('تنبيه','اختاري إجابة أولًا.','error');return;}
+                choice=Number(selected.value);
+                if(choice!==mission.correctOptionIndex){showNotification('حاولي مجددًا','راجعي الوثيقة ثم اختاري الإجابة الصحيحة.','error');return;}
+                answer=mission.options[choice];
+            }else{
+                answer=document.getElementById('creativeAnswerText')?.value.trim()||'';
+                if(answer.length<10){showNotification('تنبيه','اكتبي مقترحًا من عشرة أحرف على الأقل.','error');return;}
+            }
+            const ok=await sendClassEvent({type:'mission',teamId:groupId,missionIndex:index,choice,answer});
+            if(ok){playSuccessSound();triggerConfetti();showNotification('تم نشر الإجابة','الإجابة والنقاط ظاهرتان لجميع الفرق.','success');closeMissionModal();}
+        };
+        changeMissionActionDirect = async function(groupId){
+            const group=groupsData.find(g=>g.id===groupId);
+            if(!group||group.xp<5){showNotification('تنبيه','الرصيد غير كافٍ.','error');return;}
+            if(await sendClassEvent({type:'change',teamId:groupId}))showNotification('تم تغيير المهمة','خُصمت 5 نقاط من رصيد الفريق المشترك.','info');
+        };
+        triggerRandomBonusEvent = async function(){
+            // This control is available to all visitors in the original interface;
+            // restrict its use to teacher-supervised projection only.
+            if(!confirm('هل أنتِ المعلمة وتريدين منح 40 نقطة عشوائية؟'))return;
+            const id=groupsData[Math.floor(Math.random()*groupsData.length)].id;
+            if(await sendClassEvent({type:'bonus',teamId:id})){playSuccessSound();triggerConfetti();}
+        };
+        window.onload=function(){
+            renderActiveTeamSelect();renderStories();renderFeed();renderMiniLeaderboard();updateGlobalRespectMeter();animateFX();
+            syncClassroom();setInterval(syncClassroom,4000);
+        };
+    </script>
+</body>
+</html>
